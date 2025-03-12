@@ -8,22 +8,68 @@ To write a program to predict the price of the house and number of occupants in 
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. 
-2. 
-3. 
-4. 
+1. Load California housing data, select features and targets, and split into training and testing sets.
+2.Scale both X (features) and Y (targets) using StandardScaler. 
+3.Use SGDRegressor wrapped in MultiOutputRegressor to train on the scaled training data.
+4.Predict on test data, inverse transform the results, and calculate the mean squared error.
 
 ## Program:
-```
+```.py
+    import numpy as np
+    import pandas as pd
+    from sklearn.datasets import fetch_california_housing
+    from sklearn.linear_model import SGDRegressor
+    from sklearn.multioutput import MultiOutputRegressor
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import mean_squared_error
+    from sklearn.preprocessing import StandardScaler
+    
+    dataset=fetch_california_housing()
+    df=pd.DataFrame(dataset.data,columns=dataset.feature_names)
+    df['HousingPrice']=dataset.target
+    print(df.head())
+    
+    X=df.drop(columns=['AveOccup','HousingPrice'])
+    Y=df[['AveOccup','HousingPrice']]
+    X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+    
+    scaler_X=StandardScaler()
+    scaler_Y=StandardScaler()
+    
+    X_train=scaler_X.fit_transform(X_train)
+    X_test=scaler_X.fit_transform(X_test)
+    Y_train=scaler_Y.fit_transform(Y_train)
+    Y_test=scaler_Y.fit_transform(Y_test)
+    
+    sgd=SGDRegressor(max_iter=1000,tol=1e-3)
+    multi_output_sgd=MultiOutputRegressor(sgd)
+    multi_output_sgd.fit(X_train,Y_train)
+    Y_pred=multi_output_sgd.predict(X_test)
+    Y_pred=scaler_Y.inverse_transform(Y_pred)
+    Y_test=scaler_Y.inverse_transform(Y_test)
+    mse=mean_squared_error(Y_test,Y_pred)
+    print("Mean Squared Error:",mse)
+    print("\nPredictions\n",Y_pred[:5])
+
 /*
 Program to implement the multivariate linear regression model for predicting the price of the house and number of occupants in the house with SGD regressor.
-Developed by: 
-RegisterNumber:  
+Developed by: JEYAARIKARAN P
+RegisterNumber: 212224240064 
 */
 ```
 
 ## Output:
-![multivariate linear regression model for predicting the price of the house and number of occupants in the house](sam.png)
+
+![Screenshot 2025-03-12 132807](https://github.com/user-attachments/assets/812e9d4c-7150-4fb6-9ceb-ac098b1569cc)
+
+
+
+![Screenshot 2025-03-12 132831](https://github.com/user-attachments/assets/35af689e-b53d-469c-8012-8a1d53b42c33)
+
+
+
+![Screenshot 2025-03-12 132852](https://github.com/user-attachments/assets/826bcf43-9e1e-4db0-ba51-45b35efa105a)
+
 
 
 ## Result:
